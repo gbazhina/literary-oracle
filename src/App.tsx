@@ -70,7 +70,7 @@ const App: React.FC = () => {
   // Экран приветствия
   if (screen === "welcome") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
+      <div className="flex flex-col items-center justify-center min-h-screen min-w-screen p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
