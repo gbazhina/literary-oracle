@@ -1,9 +1,10 @@
+export type TCategory = "wisdom" | "love" | "fate" | "action" | "courage";
 export interface Quote {
   id: number;
   text: string;
   author: string;
   book: string;
-  category: "wisdom" | "love" | "fate" | "action" | "courage";
+  category: string;
   interpretation: string;
 }
 
