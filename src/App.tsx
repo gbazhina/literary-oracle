@@ -1,9 +1,10 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { quotes } from "./data/quotes_monte_cristo2";
-import { Quote, Screen, PredictionHistory } from "./components/types";
+import { quotes } from "./data/quotes";
+import { Quote, Screen, PredictionHistory, QuoteCategory } from "./components/types";
 import LoadingScreen from "./components/LoadingScreen";
 import QuoteCard from "./components/QuoteCard";
+import BurgerMenu from "./components/BurgerMenu";
 
 const HISTORY_KEY = "oracleHistory";
 
@@ -26,16 +27,35 @@ const saveToHistory = (quote: Quote): void => {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
 };
 
-const getRandomQuote = (excludeIds: number[] = []): Quote => {
-  const available = quotes.filter((q) => !excludeIds.includes(q.id));
-  if (available.length === 0)
-    return quotes[Math.floor(Math.random() * quotes.length)];
+const getRandomQuote = (
+  excludeIds: number[] = [],
+  category: QuoteCategory | null = null,
+): Quote => {
+  let pool = quotes;
+
+  if (category) {
+    pool = quotes.filter((q) => q.category === category);
+  }
+
+  // Если после фильтрации по категории pool пустой — берём из всех
+  if (pool.length === 0) {
+    pool = quotes;
+  }
+
+  const available = pool.filter((q) => !excludeIds.includes(q.id));
+  if (available.length === 0) {
+    // Если все исключены — берём любую из pool
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
   return available[Math.floor(Math.random() * available.length)];
 };
 
 const App: React.FC = () => {
   const [screen, setScreen] = useState<Screen>("welcome");
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<QuoteCategory | null>(null);
 
   const handleGetPrediction = useCallback((): void => {
     setScreen("loading");
@@ -43,13 +63,13 @@ const App: React.FC = () => {
     setTimeout(() => {
       const history = getStoredHistory();
       const excludeIds = history.slice(0, 20).map((h) => h.id);
-      const quote = getRandomQuote(excludeIds);
+      const quote = getRandomQuote(excludeIds, selectedCategory);
 
       saveToHistory(quote);
       setCurrentQuote(quote);
       setScreen("result");
-    }, 4000);
-  }, []);
+    }, 3000);
+  }, [selectedCategory]);
 
   const handleShare = useCallback((): void => {
     if (!currentQuote) return;
@@ -57,9 +77,7 @@ const App: React.FC = () => {
     const text = `"${currentQuote.text}"\n— ${currentQuote.author}, «${currentQuote.book}»\n\n✨ Литературный Оракул`;
 
     if (navigator.share) {
-      navigator.share({ title: "Моё предсказание", text }).catch(() => {
-        // Пользователь отменил шаринг
-      });
+      navigator.share({ title: "Моё предсказание", text }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text).then(() => {
         alert("Скопировано в буфер обмена!");
@@ -70,14 +88,18 @@ const App: React.FC = () => {
   // Экран приветствия
   if (screen === "welcome") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen min-w-screen p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
+      <div className="flex flex-col items-center justify-center min-w-screen min-h-screen p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
+        <BurgerMenu
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-center"
         >
-          {/* Декоративная иконка */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -111,6 +133,40 @@ const App: React.FC = () => {
             Задайте вопрос и получите ответ из великих произведений
           </p>
 
+          {/* Индикатор выбранной категории */}
+          {selectedCategory && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-4 items-center gap-2 px-4 py-2 bg-amber-600/20 border border-amber-500/30 rounded-full"
+            >
+              <span className="text-sm">
+                {selectedCategory === "wisdom" && "📖"}
+                {selectedCategory === "love" && "💫"}
+                {selectedCategory === "fate" && "🔮"}
+                {selectedCategory === "action" && "⚡"}
+                {selectedCategory === "courage" && "🦁"}
+                {selectedCategory === "finance" && "💰"}
+                {selectedCategory === "life" && "🍃"}
+                {selectedCategory === "freedom" && "🌊"}
+                {selectedCategory === "happiness" && "🌸"}
+                {selectedCategory === "graf" && "⚔️"}
+              </span>
+              <span className="text-amber-200 text-sm font-body">
+                {selectedCategory === "wisdom" && "Мудрость"}
+                {selectedCategory === "love" && "Любовь"}
+                {selectedCategory === "fate" && "Судьба"}
+                {selectedCategory === "action" && "Действие"}
+                {selectedCategory === "courage" && "Смелость"}
+                {selectedCategory === "finance" && "Финансы"}
+                {selectedCategory === "life" && "Жизнь"}
+                {selectedCategory === "freedom" && "Свобода"}
+                {selectedCategory === "happiness" && "Счастье"}
+                {selectedCategory === "graf" && "Граф Монте-Кристо"}
+              </span>
+            </motion.div>
+          )}
+
           <motion.button
             onClick={handleGetPrediction}
             whileHover={{ scale: 1.05 }}
@@ -130,17 +186,32 @@ const App: React.FC = () => {
 
   // Экран загрузки
   if (screen === "loading") {
-    return <LoadingScreen />;
+    return (
+      <>
+        <BurgerMenu
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+        <LoadingScreen />
+      </>
+    );
   }
 
   // Экран результата
   if (screen === "result" && currentQuote) {
     return (
-      <QuoteCard
-        quote={currentQuote}
-        onNewQuote={handleGetPrediction}
-        onShare={handleShare}
-      />
+      <>
+        <BurgerMenu
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
+        <QuoteCard
+          quote={currentQuote}
+          onNewQuote={handleGetPrediction}
+          onShare={handleShare}
+          selectedCategory={selectedCategory}
+        />
+      </>
     );
   }
 

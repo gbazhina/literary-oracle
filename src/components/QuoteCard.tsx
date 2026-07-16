@@ -1,16 +1,18 @@
 import { motion } from "motion/react";
-import { Quote } from "./types";
+import { QuoteCategory, Quote } from "./types";
 
 interface QuoteCardProps {
   quote: Quote;
   onNewQuote: () => void;
   onShare: () => void;
+  selectedCategory: QuoteCategory | null;
 }
 
 const QuoteCard: React.FC<QuoteCardProps> = ({
   quote,
   onNewQuote,
   onShare,
+  selectedCategory,
 }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen min-w-screen p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
@@ -103,21 +105,23 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
           </motion.div>
 
           {/* Толкование */}
-          <motion.div
-            className="bg-amber-950/30 border border-amber-500/10 rounded-xl p-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2 }}
-          >
-            <p className="text-amber-100/70 font-body text-sm leading-relaxed text-center">
-              {quote.interpretation}
-            </p>
-          </motion.div>
+          {quote.interpretation && (
+            <motion.div
+              className="bg-amber-950/30 border border-amber-500/10 rounded-xl p-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2 }}
+            >
+              <p className="text-amber-100/70 font-body text-sm leading-relaxed text-center">
+                {quote.interpretation}
+              </p>
+            </motion.div>
+          )}
         </div>
       </motion.div>
       {/* Кнопки действий */}
       <motion.div
-        className="flex gap-4 mt-8"
+        className="flex gap-4 mt-8 items-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.3 }}
@@ -128,6 +132,39 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
         >
           Ещё раз
         </button>
+        {/* Индикатор выбранной категории */}
+        {selectedCategory && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="items-center gap-2 px-4 py-2 bg-amber-600/20 border border-amber-500/30 rounded-full"
+          >
+            <span className="text-sm">
+              {selectedCategory === "wisdom" && "📖"}
+              {selectedCategory === "love" && "💫"}
+              {selectedCategory === "fate" && "🔮"}
+              {selectedCategory === "action" && "⚡"}
+              {selectedCategory === "courage" && "🦁"}
+              {selectedCategory === "finance" && "💰"}
+              {selectedCategory === "life" && "🍃"}
+              {selectedCategory === "freedom" && "🌊"}
+              {selectedCategory === "happiness" && "🌸"}
+              {selectedCategory === "graf" && "⚔️"}
+            </span>&nbsp;
+            <span className="text-amber-200 text-sm font-body">
+              {selectedCategory === "wisdom" && "Мудрость"}
+              {selectedCategory === "love" && "Любовь"}
+              {selectedCategory === "fate" && "Судьба"}
+              {selectedCategory === "action" && "Действие"}
+              {selectedCategory === "courage" && "Смелость"}
+              {selectedCategory === "finance" && "Финансы"}
+              {selectedCategory === "life" && "Жизнь"}
+              {selectedCategory === "freedom" && "Свобода"}
+              {selectedCategory === "happiness" && "Счастье"}
+              {selectedCategory === "graf" && "Граф Монте-Кристо"}
+            </span>
+          </motion.div>
+        )}
         <button
           onClick={onShare}
           className="px-6 py-3 border border-amber-500/50 hover:bg-amber-500/10 text-amber-200 rounded-full font-medium transition-all active:scale-95"

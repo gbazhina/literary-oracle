@@ -1,90 +1,157 @@
 import { motion } from "framer-motion";
 
 const LoadingScreen: React.FC = () => {
+  // Параметры лепестков цветка
+  const petalCount = 6;
+  const petals = Array.from({ length: petalCount }, (_, i) => i);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen min-w-screen p-6 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800">
-      {/* Книга, которая открывается */}
-      <div className="relative w-72 h-40 mb-8">
-        {/* Левая страница */}
+    <div className="flex flex-col items-center justify-center min-w-screen min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 overflow-hidden">
+      {/* Контейнер цветка */}
+      <div className="relative w-48 h-48 mb-12">
+        {/* Вращающиеся лепестки */}
         <motion.div
-          className="absolute left-0 top-0 w-36 h-40 bg-amber-100 rounded-l-sm origin-right"
-          style={{ transformStyle: "preserve-3d" }}
-          animate={{ rotateY: [0, -30, -160, -140, -160] }}
-          transition={{
-            duration: 2.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            times: [0, 0.3, 0.6, 0.8, 1],
-          }}
+          className="absolute inset-0"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         >
-          <div className="p-2 text-[16px] text-amber-800/40 leading-tight font-body">
-            Lorem ipsum dolor sit amet...
-          </div>
+          {petals.map((i) => {
+            const angle = (360 / petalCount) * i;
+            return (
+              <motion.div
+                key={i}
+                className="absolute top-1/2 left-1/2 w-16 h-16 -mt-8 -ml-8"
+                style={{
+                  transform: `rotate(${angle}deg) translateY(-40px)`,
+                }}
+              >
+                <div
+                  className="w-full h-full rounded-full bg-gradient-to-t from-amber-600/80 to-amber-300/60 backdrop-blur-sm"
+                  style={{
+                    borderRadius: "50% 50% 50% 50% / 60% 60% 40% 40%",
+                    transform: "rotate(-90deg)",
+                    boxShadow:
+                      "0 0 20px rgba(251, 191, 36, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.1)",
+                  }}
+                />
+              </motion.div>
+            );
+          })}
         </motion.div>
 
-        {/* Правая страница */}
+        {/* Центр цветка (ядро) */}
         <motion.div
-          className="absolute right-0 top-0 w-36 h-40 bg-amber-50 rounded-r-sm origin-left"
-          style={{ transformStyle: "preserve-3d" }}
-          animate={{ rotateY: [0, 30, 160, 140, 160] }}
-          transition={{
-            duration: 2.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            times: [0, 0.3, 0.6, 0.8, 1],
-          }}
-        >
-          <div className="p-2 text-[16px] text-amber-800/40 leading-tight font-body text-right">
-            ...consectetur adipiscing elit
-          </div>
-        </motion.div>
-
-        {/* Корешок */}
-        <div className="absolute left-1/2 top-0 w-1 h-40 bg-amber-900 -translate-x-1/2 z-10" />
-      </div>
-
-      {/* Падающие частицы */}
-      {[...Array(6)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-amber-400/60 rounded-full"
-          initial={{
-            x: 0,
-            y: -20,
-            opacity: 0,
-          }}
+          className="absolute top-1/2 left-1/2 w-16 h-16 -mt-8 -ml-8 rounded-full bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 z-10"
           animate={{
-            y: [0, 100, 200],
-            x: [0, (i - 3) * 20, (i - 3) * 40],
-            opacity: [0, 1, 0],
+            scale: [1, 1.15, 1],
+            boxShadow: [
+              "0 0 30px rgba(251, 191, 36, 0.4)",
+              "0 0 60px rgba(251, 191, 36, 0.7)",
+              "0 0 30px rgba(251, 191, 36, 0.4)",
+            ],
           }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            delay: i * 0.3,
-            ease: "easeOut",
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          {/* Внутреннее свечение ядра */}
+          <div className="absolute inset-2 rounded-full bg-gradient-to-br from-amber-200/40 to-transparent" />
+        </motion.div>
+
+        {/* Внешнее свечение */}
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          animate={{
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            background:
+              "radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, transparent 70%)",
           }}
         />
-      ))}
 
-      {/* Текст загрузки с побуквенным появлением */}
-      <motion.p
-        className="text-amber-200/60 font-body text-lg tracking-widest"
+        {/* Плавающие частицы вокруг */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`particle-${i}`}
+            className="absolute w-1.5 h-1.5 rounded-full bg-amber-400/70"
+            style={{
+              top: "50%",
+              left: "50%",
+            }}
+            animate={{
+              x: [
+                0,
+                Math.cos((i * Math.PI * 2) / 8) * 80,
+                Math.cos((i * Math.PI * 2) / 8) * 100,
+                0,
+              ],
+              y: [
+                0,
+                Math.sin((i * Math.PI * 2) / 8) * 80,
+                Math.sin((i * Math.PI * 2) / 8) * 100,
+                0,
+              ],
+              opacity: [0, 1, 0, 0],
+              scale: [0, 1, 0.5, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              delay: i * 0.5,
+              ease: "easeOut",
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Текст загрузки */}
+      <motion.div
+        className="text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
       >
-        {"Оракул читает страницы...".split("").map((char, i) => (
-          <motion.span
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 + i * 0.05 }}
-          >
-            {char}
-          </motion.span>
-        ))}
-      </motion.p>
+        <motion.p
+          className="text-amber-200/80 font-serif text-2xl mb-3 tracking-wide"
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          {"Оракул читает страницы...".split("").map((char, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 + i * 0.04 }}
+            >
+              {char}
+            </motion.span>
+          ))}
+        </motion.p>
+
+        <motion.p
+          className="text-amber-200/40 font-body text-sm tracking-widest uppercase"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+        >
+          Подождите немного
+        </motion.p>
+      </motion.div>
+
+      {/* Прогресс-индикатор в виде линии */}
+      <motion.div
+        className="mt-8 w-48 h-0.5 bg-slate-700/50 rounded-full overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+      >
+        <motion.div
+          className="h-full bg-gradient-to-r from-amber-600 to-amber-300"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 3, ease: "easeInOut" }}
+        />
+      </motion.div>
     </div>
   );
 };
