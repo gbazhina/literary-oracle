@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -49,54 +49,54 @@ declare global {
   }
 }
 
-export const useTelegram = () => {
-  const [user, setUser] = useState<
-    Window["Telegram"]["WebApp"]["initDataUnsafe"]["user"] | null
-  >(null);
-  const [isReady, setIsReady] = useState(false);
+// export const useTelegram = () => {
+//   const [user, setUser] = useState<
+//     Window["Telegram"]["WebApp"]["initDataUnsafe"]["user"] | null
+//   >(null);
+//   const [isReady, setIsReady] = useState(false);
 
-  const tg = window.Telegram?.WebApp;
+//   const tg = window.Telegram?.WebApp;
 
-  useEffect(() => {
-    if (!tg) return;
+//   useEffect(() => {
+//     if (!tg) return;
 
-    tg.ready();
-    tg.expand();
-    tg.enableClosingConfirmation();
+//     tg.ready();
+//     tg.expand();
+//     tg.enableClosingConfirmation();
 
-    if (tg.initDataUnsafe?.user) {
-      setUser(tg.initDataUnsafe.user);
-      // Сохраняем user_id для бэкенда (пока в localStorage)
-      localStorage.setItem("tg_user_id", String(tg.initDataUnsafe.user.id));
-    }
+//     if (tg.initDataUnsafe?.user) {
+//       setUser(tg.initDataUnsafe.user);
+//       // Сохраняем user_id для бэкенда (пока в localStorage)
+//       localStorage.setItem("tg_user_id", String(tg.initDataUnsafe.user.id));
+//     }
 
-    setIsReady(true);
-  }, [tg]);
+//     setIsReady(true);
+//   }, [tg]);
 
-  const haptic = {
-    light: () => tg?.HapticFeedback?.impactOccurred("light"),
-    success: () => tg?.HapticFeedback?.notificationOccurred("success"),
-    error: () => tg?.HapticFeedback?.notificationOccurred("error"),
-  };
+//   const haptic = {
+//     light: () => tg?.HapticFeedback?.impactOccurred("light"),
+//     success: () => tg?.HapticFeedback?.notificationOccurred("success"),
+//     error: () => tg?.HapticFeedback?.notificationOccurred("error"),
+//   };
 
-  return {
-    tg,
-    user,
-    isReady,
-    haptic,
-    close: () => tg?.close(),
-    setMainButton: (text: string, onClick: () => void, color?: string) => {
-      if (!tg) return;
-      tg.MainButton.setText(text);
-      if (color) tg.MainButton.setParams({ color });
-      tg.MainButton.onClick(onClick);
-      tg.MainButton.show();
-    },
-    hideMainButton: () => tg?.MainButton.hide(),
-    showBackButton: (onClick: () => void) => {
-      tg?.BackButton.show();
-      tg?.BackButton.onClick(onClick);
-    },
-    hideBackButton: () => tg?.BackButton.hide(),
-  };
-};
+//   return {
+//     tg,
+//     user,
+//     isReady,
+//     haptic,
+//     close: () => tg?.close(),
+//     setMainButton: (text: string, onClick: () => void, color?: string) => {
+//       if (!tg) return;
+//       tg.MainButton.setText(text);
+//       if (color) tg.MainButton.setParams({ color });
+//       tg.MainButton.onClick(onClick);
+//       tg.MainButton.show();
+//     },
+//     hideMainButton: () => tg?.MainButton.hide(),
+//     showBackButton: (onClick: () => void) => {
+//       tg?.BackButton.show();
+//       tg?.BackButton.onClick(onClick);
+//     },
+//     hideBackButton: () => tg?.BackButton.hide(),
+//   };
+// };
