@@ -14,9 +14,9 @@ const categories: CategoryOption[] = [
   { id: "action", label: "Действие", icon: "⚡" },
   { id: "courage", label: "Смелость", icon: "🦁" },
   { id: "finance", label: "Финансы", icon: "💰" },
-  { id: "life", label: "Жизнь", icon: "🍃" },
-  { id: "freedom", label: "Свобода", icon: "🌊" },
-  { id: "happiness", label: "Счастье", icon: "🌸" },
+  { id: "life", label: "Жизнь", icon: "🌿" },
+  { id: "freedom", label: "Свобода", icon: "🕊️" },
+  { id: "happiness", label: "Счастье", icon: "☀️" },
   { id: "graf", label: "Граф Монте-Кристо", icon: "⚔️" },
 ];
 
@@ -81,10 +81,10 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 z-40 h-full w-72 bg-gradient-to-b from-slate-900 to-slate-800 border-l border-amber-500/20 shadow-2xl shadow-black/50"
+            className="fixed top-0 right-0 z-40 h-screen w-72 bg-gradient-to-b from-slate-900 to-slate-800 border-l border-amber-500/20 shadow-2xl shadow-black/50 flex flex-col"
           >
-            {/* Заголовок меню */}
-            <div className="pt-20 pb-6 px-6 border-b border-amber-500/10">
+            {/* Заголовок меню — фиксированный */}
+            <div className="flex-shrink-0 pt-20 pb-4 px-6 border-b border-amber-500/10">
               <h2 className="text-amber-100 font-serif text-xl">
                 Темы предсказаний
               </h2>
@@ -93,8 +93,8 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({
               </p>
             </div>
 
-            {/* Список категорий */}
-            <div className="p-4 space-y-2">
+            {/* Список категорий — скроллится */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
               {/* Все категории */}
               <button
                 onClick={() => handleCategoryClick(null)}
@@ -139,8 +139,8 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({
               ))}
             </div>
 
-            {/* Нижняя часть */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-amber-500/10">
+            {/* Нижняя часть — фиксированная */}
+            <div className="flex-shrink-0 p-4 border-t border-amber-500/10 bg-slate-900/50">
               <p className="text-amber-200/30 text-xs font-body text-center">
                 Литературный Оракул
               </p>

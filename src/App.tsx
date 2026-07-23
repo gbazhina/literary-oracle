@@ -5,6 +5,7 @@ import { Quote, Screen, PredictionHistory, QuoteCategory } from "./components/ty
 import LoadingScreen from "./components/LoadingScreen";
 import QuoteCard from "./components/QuoteCard";
 import BurgerMenu from "./components/BurgerMenu";
+import { useTelegram } from "./hooks/useTelegram";
 
 const HISTORY_KEY = "oracleHistory";
 
@@ -56,6 +57,7 @@ const App: React.FC = () => {
   const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
   const [selectedCategory, setSelectedCategory] =
     useState<QuoteCategory | null>(null);
+  const { user } = useTelegram();
 
   const handleGetPrediction = useCallback((): void => {
     setScreen("loading");
@@ -119,6 +121,10 @@ const App: React.FC = () => {
               />
             </svg>
           </motion.div>
+
+          <p className="text-amber-200/60 font-body text-lg mb-2">
+            Привет{user?.first_name ? `, ${user.first_name}` : ""} 👋
+          </p>
 
           <h1 className="text-5xl font-serif text-amber-50 mb-3 tracking-tight">
             Литературный

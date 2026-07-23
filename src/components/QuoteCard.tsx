@@ -133,7 +133,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
           Ещё раз
         </button>
         {/* Индикатор выбранной категории */}
-        {selectedCategory && (
+        {/* {selectedCategory && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -164,7 +164,7 @@ const QuoteCard: React.FC<QuoteCardProps> = ({
               {selectedCategory === "graf" && "Граф Монте-Кристо"}
             </span>
           </motion.div>
-        )}
+        )} */}
         <button
           onClick={onShare}
           className="px-6 py-3 border border-amber-500/50 hover:bg-amber-500/10 text-amber-200 rounded-full font-medium transition-all active:scale-95"
